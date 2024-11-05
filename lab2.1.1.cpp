@@ -1,7 +1,3 @@
-#include <iostream>
-#include <string>
-#include <vector>
-using namespace std;
 /*Άσκηση 1.1
 Κατασκευάστε το πρόγραμμα primes.cpp το οποίο θα δέχεται ως είσοδο έναν ακέραιο και
 i. θα βρίσκει όλους τους πρώτους αριθμούς μέχρι τον συγκεκριμένο ακέραιο και θα τους γράφει
@@ -11,6 +7,12 @@ ii. θα γράφει σε έναν δεύτερο μονοδιάστατο πί
 iii. θα γράφει σε έναν τρίτο μονοδιάστατο πίνακα τους άρτιους πρώτους αριθμούς.
 iv. θα εκτυπώνει τους πίνακες με τα στοιχεία του κάθε πίνακα χωρισμένα με στηλογνώμονα
 (tab).*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
 
 void sieve_of_Erato(int n, vector<int>& primes, vector<int>& odd_primes, vector<int>& even_primes){
     vector<bool> is_prime(n + 1, true);
