@@ -22,81 +22,96 @@
 όχι απλά να έχουν ίσο εμβαδόν)*/
 
 #include <iostream>
-#include <string>
 #include <cmath>
 using namespace std;
 
-class Point{
-    private:
-        double x, y;
+class Point {
+private:
+    double x, y;
 
-        void print_info(){
-            cout << '(' << x << ',' << y << ')' << endl;
-        }
-    
-    public:
-        Point(double cordx = 0.0, double cordy = 0.0) : x(cordx), y(cordy) {}
+    void print_info() const {
+        cout << '(' << x << ',' << y << ')' << endl;
+    }
 
-        ~Point(){}
-    
-    void set(double cordx, double cordy){
+public:
+    Point(double cordx = 0.0, double cordy = 0.0) : x(cordx), y(cordy) {}
+
+    void set(double cordx, double cordy) {
         x = cordx;
         y = cordy;
     }
 
-    void print(){
+    void print() const {
         print_info();
     }
 
-    double dist(const Point& other){
+    double dist(const Point& other) const {
         return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
     }
 
-    bool equal(const Point& another){
+    bool equal(const Point& another) const {
         return ((x == another.x) && (y == another.y));
     }
 
+    friend class Triangle;  // Allow Triangle to access private members
 };
 
-class Triangle{
-    private:
-        Point p1, p2, p3;
+class Triangle {
+private:
+    Point p1, p2, p3;
 
-    private: 
-        Triangle(const Point& point1 = Point(), const Point& point2 = Point(), const Point& point3 = Point())
-            : p1(point1), p2(point2), p3(point3){}
+public:
+    Triangle(const Point& point1 = Point(), const Point& point2 = Point(), const Point& point3 = Point())
+        : p1(point1), p2(point2), p3(point3) {}
 
-        ~Triangle(){}
-
-    void set(Point point1, Point point2, Point point3){
+    void set(const Point& point1, const Point& point2, const Point& point3) {
         p1 = point1;
         p2 = point2;
         p3 = point3;
     }
 
-    void print(){
+    void print() const {
         cout << "P1 = "; p1.print();
         cout << "P2 = "; p2.print();
         cout << "P3 = "; p3.print();
     }
 
-    const Point& get(int index){
+    const Point& get(int index) const {
         if (index == 0) return p1;
-        if (index == 1) return p2;
-        if (index == 2) return p3;
-        return NULL;
+        else if (index == 1) return p2;
+        else if (index == 2) return p3;
+        throw out_of_range("Index out of bounds");
     }
 
-    double area(const Point& a, const Point& b, const Point& c){
-        return 0.5 * std::abs(a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
+    double area() const {
+        return 0.5 * std::abs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
     }
 
-    bool equal(const Triangle& other){
-        return area() == other.area();
+    bool equal(const Triangle& other) const {
+        return this->area() == other.area();
     }
 
-    bool is_the_same(const Triangle& another){
+    bool is_the_same(const Triangle& another) const {
         return p1.equal(another.p1) && p2.equal(another.p2) && p3.equal(another.p3);
     }
-
 };
+
+int main() {
+    Point p1(1.0, 1.0), p2(2.0, 2.0), p3(3.0, 3.0);
+    Triangle triangle1(p1, p2, p3);
+
+    // Set and print Point
+    p1.set(5.0, 5.0);
+    p1.print();
+
+    // Print Triangle details
+    triangle1.print();
+    cout << "Area of triangle: " << triangle1.area() << endl;
+
+    // Testing equality and same triangles
+    Triangle triangle2(p1, p2, p3);
+    cout << "Triangles are equal: " << (triangle1.equal(triangle2) ? "Yes" : "No") << endl;
+    cout << "Triangles are the same: " << (triangle1.is_the_same(triangle2) ? "Yes" : "No") << endl;
+
+    return 0;
+}
