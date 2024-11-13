@@ -34,10 +34,13 @@ setter και print).
 #include <cstring>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
 class School;
+class Department;
+class Student;
 
 class University_Branch {
 private:
@@ -50,11 +53,10 @@ private:
 
 public:
 
-    University_Branch(string n, string ad) : name(n), address(ad), num_schools(0),  {
-        
-    }
+    University_Branch(string n, string ad)
+        : name(n), address(ad), num_schools(0), num_departments(0), num_students(0) {}
 
-    void add_school(School school) {
+    void add_school(const class School& school) {
         schools.push_back(school);
         num_schools++;
     }
@@ -62,25 +64,32 @@ public:
     void print() const {
         cout << "University Branch: " << name << ", Address: " << address << endl;
         cout << "Number of Schools: " << num_schools << endl;
+        cout << "Number of Departments: " << num_departments << endl;
+        cout << "Number of Students: " << num_students << endl;
     }
 
-    ~University_Branch() {};
 };
 
 class School {
 private:
     string name;
+    vector<Department> departments;
     int num_departments;
     int num_students;
 
-private:
-    School(string n) : name(n) {
-        
-    };
+public:
+    School(string n) : name(n), num_departments(0), num_students(0){}
 
+    void add_department(const Department& department) {
+        departments.push_back(department);
+        num_departments++;
+    }
 
-
-    ~School() {};
+    void print() const {
+        cout << "School: " << name << endl;
+        cout << "Number of Departments: " << num_departments << endl;
+        cout << "Number of Students: " << num_students << endl;
+    }
 };
 
 class Department {
@@ -90,24 +99,46 @@ private:
     int num_students;
 
 public:
-    Department(string n) : name(n) {};
+    Department(string n, int dn) : name(n), DN(dn), num_students(0) {}
 
-    ~Department() {};
+    void print() const {
+        cout << "Department: " << name << " (ID: " << DN << ")" << endl;
+        cout << "Number of Students: " << num_students << endl;
+    }
 };
 
 class Student {
-    string big_name;
+    string full_name;
     unsigned long AM;
 
-    Student(string n) : big_name(n) {};
+    Student(string n, unsigned long am) : full_name(n), AM(am) {}
 
-    ~Student() {};
-
+    void print() const {
+        cout << "Student: " << full_name << ", AM: " << AM << endl;
+    }
 };
 
 int main() {
 
+    University_Branch ekpa_cyprus("EKPA", "Cyprus");
 
+    School informatics("School of Informatics");
+    School medicine("School of Medicine");
+
+    Department cs("Computer Science", 1115);
+    Department med("Medical Science", 2110);
+
+    informatics.add_department(cs);
+    medicine.add_department(med);
+
+    ekpa_cyprus.add_school(informatics);
+    ekpa_cyprus.add_school(medicine);
+
+    ekpa_cyprus.print();
+    informatics.print();
+    medicine.print();
+    cs.print();
+    med.print();
 
     return 0;
 }
