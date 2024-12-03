@@ -22,141 +22,96 @@
 όχι απλά να έχουν ίσο εμβαδόν)*/
 
 #include <iostream>
-#include <memory> //  std::shared_ptr και std::unique_ptr
+#include <cmath>
+using namespace std;
 
-namespace std {
+class Point {
+private:
+    double x, y;
 
-    // 1.1 & 1.2
-    struct Point {
-        double x; 
-        double y; 
+    void print_info() const {
+        cout << '(' << x << ',' << y << ')' << endl;
+    }
 
-        Point(double xCoord, double yCoord) : x(xCoord), y(yCoord) {
-            cout << "Constructor called: Point(" << x << ", " << y << ") created.\n";
-        }
+public:
+    Point(double cordx = 0.0, double cordy = 0.0) : x(cordx), y(cordy) {}
 
-        ~Point() {
-            cout << "Destructor called: Point(" << x << ", " << y << ") destroyed.\n";
-        }
+    void set(double cordx, double cordy) {
+        x = cordx;
+        y = cordy;
+    }
 
-        double getX() const { return x; }
-        double getY() const { return y; }
-        void setX(double newX) { x = newX; }
-        void setY(double newY) { y = newY; }
+    void print() const {
+        print_info();
+    }
 
-        void print() const {
-            cout << "Point(" << x << ", " << y << ")\n";
-        }
-    };
+    double dist(const Point& other) const {
+        return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
+    }
 
-    // Άσκηση 2:
-    struct Node {
-        Point data;
-        shared_ptr<Node> next;      // shared_ptr >> new
+    bool equal(const Point& another) const {
+        return ((x == another.x) && (y == another.y));
+    }
 
-        
-        Node(const Point &point, shared_ptr<Node> nextNode = nullptr)
-            : data(point), next(nextNode) {
-            cout << "Node created with Point(" << data.x << ", " << data.y << ").\n";
-        }
-    };
+    friend class Triangle;  // Allow Triangle to access private members
+};
 
-    // Άσκηση 3:
-    class List {
-    private:
-        struct Node {
-            Point data;
-            Node *next;
+class Triangle {
+private:
+    Point p1, p2, p3;
 
-            // Constructor
-            Node(const Point &point, Node *nextNode = nullptr)
-                : data(point), next(nextNode) {
-                cout << "Node created with Point(" << data.x << ", " << data.y << ").\n";
-            }
-        };
+public:
+    Triangle(const Point& point1 = Point(), const Point& point2 = Point(), const Point& point3 = Point())
+        : p1(point1), p2(point2), p3(point3) {}
 
-        Node *head;
-        size_t count;
+    void set(const Point& point1, const Point& point2, const Point& point3) {
+        p1 = point1;
+        p2 = point2;
+        p3 = point3;
+    }
 
-    public:
-        
-        List() : head(nullptr), count(0) {
-            cout << "List created.\n";
-        }
+    void print() const {
+        cout << "P1 = "; p1.print();
+        cout << "P2 = "; p2.print();
+        cout << "P3 = "; p3.print();
+    }
 
-        ~List() {
-            while (head) {
-                Node *temp = head;
-                head = head->next;
-                delete temp;
-            }
-            cout << "List destroyed and memory released.\n";
-        }
+    const Point& get(int index) const {
+        if (index == 0) return p1;
+        else if (index == 1) return p2;
+        else if (index == 2) return p3;
+        throw out_of_range("Index out of bounds");
+    }
 
-        size_t size() const { return count; }
+    double area() const {
+        return 0.5 * std::abs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+    }
 
-        void pushFront(const Point &point) {
-            head = new Node(point, head);
-            ++count;
-        }
+    bool equal(const Triangle& other) const {
+        return this->area() == other.area();
+    }
 
-        void pop(size_t position) {
-            if (position >= count) {
-                cout << "Invalid position.\n";
-                return;
-            }
-
-            Node *temp = head;
-            if (position == 0) {
-                head = head->next;
-                delete temp;
-            } else {
-                for (size_t i = 0; i < position - 1; ++i) {
-                    temp = temp->next;
-                }
-                Node *toDelete = temp->next;
-                temp->next = toDelete->next;
-                delete toDelete;
-            }
-            --count;
-            cout << "Node at position " << position << " removed.\n";
-        }
-
-        void print() const {
-            Node *current = head;
-            size_t index = 0;
-
-            if (!current) {
-                cout << "List is empty.\n";
-                return;
-            }
-
-            while (current) {
-                cout << "Node " << index << ": ";
-                current->data.print();
-                current = current->next;
-                ++index;
-            }
-        }
-    };
-}
+    bool is_the_same(const Triangle& another) const {
+        return p1.equal(another.p1) && p2.equal(another.p2) && p3.equal(another.p3);
+    }
+};
 
 int main() {
-    using namespace std;
+    Point p1(1.0, 1.0), p2(2.0, 2.0), p3(3.0, 3.0);
+    Triangle triangle1(p1, p2, p3);
 
-    List list;
+    // Set and print Point
+    p1.set(5.0, 5.0);
+    p1.print();
 
-    list.pushFront(Point(1.0, 2.0));
-    list.pushFront(Point(3.0, 4.0));
-    list.pushFront(Point(5.0, 6.0));
+    // Print Triangle details
+    triangle1.print();
+    cout << "Area of triangle: " << triangle1.area() << endl;
 
-
-    list.print();
-
-    list.pop(1);
-    list.print();
-
-    cout << "List size: " << list.size() << "\n";
+    // Testing equality and same triangles
+    Triangle triangle2(p1, p2, p3);
+    cout << "Triangles are equal: " << (triangle1.equal(triangle2) ? "Yes" : "No") << endl;
+    cout << "Triangles are the same: " << (triangle1.is_the_same(triangle2) ? "Yes" : "No") << endl;
 
     return 0;
 }
