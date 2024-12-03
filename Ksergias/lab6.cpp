@@ -11,6 +11,13 @@ operate που δέχεται έναν ακέραιο (ο οποίος θα έχ
 Machinery σαν virtual. Δοκιμάστε τις αλλαγές που προκαλούνται στη main (με και χωρίς το
 virtual).*/
 
+/*Άσκηση 2
+Ορίστε μία κλάση Person και μία Technician (που κληρονομεί από την Person). Ορίστε στη Person
+μία συνάρτηση workOn που δέχεται σαν όρισμα ένα δείκτη σε Machinery και εφαρμόζει πάνω σε
+αυτό την operate. Ορίστε επίσης μία workOn που δέχεται σαν όρισμα ένα δείκτη σε Vehicle.
+Αντίστοιχα ορίστε στη Technician μία workOn που δέχεται σαν όρισμα ένα δείκτη σε Machinery και
+μία που δέχεται σαν όρισμα ένα δείκτη σε Computer. Δοκιμάστε τα παραπάνω στη main.*/
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -37,7 +44,6 @@ public:
         cout << "Machinery worked for " << hours << " hours" << endl;
     }
 
-
 };
 
 class Vehicle : public Machinery {
@@ -62,14 +68,72 @@ public:
 
 };
 
-int main() {
-    Vehicle v("Car", 1200.0);         // Δημιουργία αντικειμένου Vehicle
-    Computer c("Laptop", 2.5);       // Δημιουργία αντικειμένου Computer
+class Person {
+private:
+    string name;
 
-    v.operate(4);                    // Vehicle worked for 4 hours
-    c.operate(2);                    // Computer was in use for 2 hours
+public:
+    Person(const string& name) : name(name) {}
+
+    ~Person() {}
+
+    // work_on for machinery
+    virtual void work_on(Machinery* machine){
+        cout << "Person is working on a machinery.\n";
+        machine->operate();
+    }
+
+    // work_on for vehicle
+    void work_on(Vehicle* vehicle) {
+    cout << "Person is working on a vehicle.\n";
+    vehicle->operate();
+    }
+
+};
+
+class Technician : public Person {
+public:
+    Technician(const string& name) : Person(name) {}
+    
+        // work_on for machinery
+    void work_on(Machinery* machine) override {
+        cout << "Person is working on a machinery.\n";
+        machine->operate();
+    }
+
+    // work_on for computer
+    void work_on(Computer* computer) {
+    cout << "Person is working on a computer.\n";
+    computer->operate();
+    }
+
+};
+
+
+int main() {
+    // Δημιουργία αντικειμένων Vehicle και Computer
+    Vehicle v("Car", 1200.0);
+    Computer c("Laptop", 2.5);
+
+    // Δημιουργία αντικειμένου Person
+    Person p("John");
+
+    // Δοκιμή της Person
+    cout << "\n--- Testing Person ---\n";
+    p.work_on(&v);  // Δοκιμή με Vehicle
+    p.work_on(&c);  // Δοκιμή με Computer (πρέπει να εκτυπώσει μήνυμα για Machinery)
+
+    // Δημιουργία αντικειμένου Technician
+    Technician t("Alice");
+
+    // Δοκιμή της Technician
+    cout << "\n--- Testing Technician ---\n";
+    t.work_on(&v);  // Δοκιμή με Vehicle
+    t.work_on(&c);  // Δοκιμή με Computer
 
     return 0;
 }
+
+
 
 
