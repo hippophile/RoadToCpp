@@ -6,9 +6,9 @@
 operate που δέχεται έναν ακέραιο (ο οποίος θα έχει και κάποια default τιμή) και θα εκτυπώνει
 ότι το αντικείμενο δούλεψε για τόσες ώρες. Δοκιμάστε τα παραπάνω στη main.
 2. Επαναορίστε την operate (override) σε κάθε υποκλάση της Machinery. Για την Computer, ας
-γίνεται χρήση και της αρχικής operate (αυτή της Machinery).
+γίνεται χρήση και της αλλαγέςαρχικής operate (αυτή της Machinery).
 3. Ορίστε την operate της Machinery σαν pure virtual. Επίσης ορίστε τον destructor της
-Machinery σαν virtual. Δοκιμάστε τις αλλαγές που προκαλούνται στη main (με και χωρίς το
+Machinery σαν virtual. Δοκιμάστε τις  που προκαλούνται στη main (με και χωρίς το
 virtual).*/
 
 /*Άσκηση 2
@@ -56,15 +56,55 @@ public:
 
 };
 
+class Phone : public Machinery {
+public:
+    Phone(const string& number, double w) : Machinery(number, w) {};
+
+    void operate(int hours = 1) const override {
+        cout << "Phone worked for " << hours << " hours" << endl;
+    }
+
+};
+
+class Drone : public Vehicle {
+public:
+    Drone(const string& name, double w) : Vehicle(name, w) {};
+
+    void operate(int hours = 1) const override {
+        cout << "Drone worked for " << hours << " hours" << endl;
+    }
+
+};
+
 class Computer : public Machinery {
 public:
     Computer(const string& name, double w) : Machinery(name, w) {};
 
     void operate(int hours = 1) const override {
-        // Machinery::operate(hours);
+        Machinery::operate(hours);
         cout << "Computer was in use for " << hours << " hours" << endl;
     }
 
+};
+
+class Smartphone : public Computer {
+public:
+    Smartphone(const string& name, double w) : Computer(name, w) {};
+
+    void operate(int hours = 1) const override {
+        // Machinery::operate(hours);
+        cout << "Smartphone was in use for " << hours << " hours" << endl;
+    }
+
+};
+
+class Iphone : public Smartphone, public Phone {
+public:
+    Iphone(const string& name, const string& number, double w) : Smartphone(name, w), Phone(number, w) {}
+
+    void operate(int hours = 1) const override {
+        cout << "Iphone was in use for " << hours << " hours" << endl;
+    }
 
 };
 
@@ -111,26 +151,14 @@ public:
 
 
 int main() {
-    // Δημιουργία αντικειμένων Vehicle και Computer
-    Vehicle v("Car", 1200.0);
-    Computer c("Laptop", 2.5);
 
-    // Δημιουργία αντικειμένου Person
-    Person p("John");
+    // Machinery* cmp = new Computer("Laptop", 2.5);
+    // cmp->operate();
+    // delete cmp;
 
-    // Δοκιμή της Person
-    cout << "\n--- Testing Person ---\n";
-    p.work_on(&v);  // Δοκιμή με Vehicle
-    p.work_on(&c);  // Δοκιμή με Computer (πρέπει να εκτυπώσει μήνυμα για Machinery)
-
-    // Δημιουργία αντικειμένου Technician
-    Technician t("Alice");
-
-    // Δοκιμή της Technician
-    cout << "\n--- Testing Technician ---\n";
-    t.work_on(&v);  // Δοκιμή με Vehicle
-    t.work_on(&c);  // Δοκιμή με Computer
-
+    Iphone p("hi", "69848484", 10.0);
+    p.operate();
+  
     return 0;
 }
 
