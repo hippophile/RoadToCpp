@@ -8,11 +8,15 @@ public abstract class Vehicle implements Rentable {
     private double dailyRate;
 
     public Vehicle(String licensePlate, String model, double dailyRate) {
+        if (dailyRate < 0) {
+            throw new IllegalArgumentException("Daily rate must be positive.");
+        }
         this.licensePlate = licensePlate;
         this.model = model;
         this.dailyRate = dailyRate;
     }
-
+    
+    // getters
     public String getLicensePlate() {
         return licensePlate;
     }
@@ -28,5 +32,11 @@ public abstract class Vehicle implements Rentable {
     @Override
     public String getDetails() {
         return "License Plate: " + licensePlate + ", Model: " + model + ", Daily Rate: " + dailyRate;
+    }
+
+    // better object representation
+    @Override
+    public String toString() {
+        return getDetails();
     }
 }
